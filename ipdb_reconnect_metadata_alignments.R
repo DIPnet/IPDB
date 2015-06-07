@@ -7,8 +7,8 @@
 
 
 library(plyr)
-datapath<-"~/Google Drive/!DIPnet_DB/Repository"
-localpath<-"~/Desktop/Reunite_metadata_and_alignments" #or whatever
+#datapath<-"~/Google Drive/!DIPnet_DB/Repository"
+#localpath<-"~/Desktop/Reunite_metadata_and_alignments" #or whatever
 setwd(path)
 
 #new folder for downstream db
@@ -25,10 +25,10 @@ allmetadataframe<-data.frame(matrix(ncol=0, nrow=0))
 filecount<-0
 
 #loop through all the files and bung'em together
-for(file in (list.files(paste(datapath,"/1-cleaned_QC2_metadata_files", sep=""),pattern="mdfasta",full.names=F))){ #file<-"name_checked_mdfasta_trimax_CO1_td.txt"
+for(file in (list.files("/Users/eric/Google Drive/!DIPnet_DB /Repository/1-cleaned_QC2_mdfasta_files",pattern="mdfasta",full.names=F))){ #file<-"name_checked_mdfasta_trimax_CO1_td.txt"
     
   print(file)
-  data<-read.table(file=paste("1-cleaned_QC2_metadata_files", file, sep="/"),header=T,stringsAsFactors=F,sep="\t",na.strings=c("","NA","#N/A"),strip.white=T,fill=T,comment.char="",quote="", colClasses=c("materialSampleID"="character"))
+  data<-read.table(file=paste("/Users/eric/Google Drive/!DIPnet_DB /Repository/1-cleaned_QC2_mdfasta_files",file,sep="/"),header=T,stringsAsFactors=F,sep="\t",na.strings=c("","NA","#N/A"),strip.white=T,fill=T,comment.char="",quote="", colClasses=c("materialSampleID"="character"))
 
   #break up the file name and pull out the locus name, convert it to upper case
 	locus<-strsplit(file,split="_")[[1]][3]
@@ -50,9 +50,11 @@ print(paste(filecount,"files processed"))
 
 
 ##LOAD IN QC'd ALIGNMENT DATA ##
+setwd("/Users/eric/Google Drive/!DIPnet_DataQC/Reunite_metadata_and_alignments/")
+
 allalignframe<-data.frame(matrix(ncol=0, nrow=0))
 
-for(fasfile in (list.files(paste(datapath,"/1-cleaned_fasta_files", sep=""),pattern="aligned",full.names=F))){ 
+for(fasfile in (list.files("./1-cleaned_fasta_files", ,pattern="aligned",full.names=F))){ 
   print(fasfile)
   fas<-readLines(paste("1-cleaned_fasta_files", fasfile, sep="/"))
 
@@ -100,10 +102,10 @@ for(fasfile in (list.files(paste(datapath,"/1-cleaned_fasta_files", sep=""),patt
 
 
 specialmatchedframe<-data.frame(matrix(ncol=0, nrow=0))
-for(file in (list.files(paste(path,"/Special_species/completed", sep=""),pattern="matcheddata",full.names=F))){ 
+for(file in (list.files("./special_species/completed",pattern="matcheddata",full.names=F))){ 
   
   print(file)
-  specialdata<-read.table(file=paste(path,"Special_species/completed",file, sep="/"),header=T,stringsAsFactors=F,sep="\t",na.strings=c("","NA","#N/A"),strip.white=T,fill=T,comment.char="",quote="")
+  specialdata<-read.table(file=paste("./special_species/completed",file, sep="/"),header=T,stringsAsFactors=F,sep="\t",na.strings=c("","NA","#N/A"),strip.white=T,fill=T,comment.char="",quote="")
   specialdata[,"Genus_species_locus"]<-NULL
   specialmatchedframe<-join(specialmatchedframe, specialdata, type = "full")
 }
@@ -135,12 +137,12 @@ matcheddataframe<-join(matcheddataframe, specialmatchedframe, type = "full")
 keepsdataframe<-matcheddataframe[,keeps]
 
 #write to a time stamped directory
-write.table(allmetadataframe,file=paste(localpath,"/",Sys.Date(),"/",Sys.Date(),"_allmetadata.txt",sep=""),quote=F,sep="\t",row.names=F)
-write.table(allalignframe,file=paste(localpath,"/",Sys.Date(),"/",Sys.Date(),"_allalignmentdata.txt",sep=""),quote=F,sep="\t",row.names=F)
+write.table(allmetadataframe,file=paste("./",Sys.Date(),"/",Sys.Date(),"_allmetadata.txt",sep=""),quote=F,sep="\t",row.names=F)
+write.table(allalignframe,file=paste("./",Sys.Date(),"/",Sys.Date(),"_allalignmentdata.txt",sep=""),quote=F,sep="\t",row.names=F)
 
-write.table(totaldataframe,file=paste(localpath,"/",Sys.Date(),"/",Sys.Date(),"_totaldata.txt",sep=""),quote=F,sep="\t",row.names=F)
-write.table(matcheddataframe,file=paste(localpath,"/",Sys.Date(),"/",Sys.Date(),"_matcheddata.txt",sep=""),quote=F,sep="\t",row.names=F)
-write.table(keepsdataframe,file=paste(localpath,"/",Sys.Date(),"/",Sys.Date(),"_keepsdata.txt",sep=""),quote=F,sep="\t",row.names=F)
+write.table(totaldataframe,file=paste("./",Sys.Date(),"/",Sys.Date(),"_totaldata.txt",sep=""),quote=F,sep="\t",row.names=F)
+write.table(matcheddataframe,file=paste("./",Sys.Date(),"/",Sys.Date(),"_matcheddata.txt",sep=""),quote=F,sep="\t",row.names=F)
+write.table(keepsdataframe,file=paste("./",Sys.Date(),"/",Sys.Date(),"_keepsdata.txt",sep=""),quote=F,sep="\t",row.names=F)
 
 ##IDENTIFYING TROUBLE FILES##
 ##species with TRUE values indicate that either metadata or alignments are missing
